@@ -226,6 +226,15 @@ describe('swapping days within a week', () => {
     expect(resolveSchedule(back, TODAY)).toEqual(resolveSchedule(active, TODAY))
   })
 
+  it('reports which printed day each slot came from', () => {
+    const active = build(planId, race)
+    const plain = weekDays(resolveSchedule(active, TODAY), 0)
+    expect(plain.map((d) => d.planDay)).toEqual([0, 1, 2, 3, 4, 5, 6])
+
+    const swapped = weekDays(resolveSchedule(swapDays(active, 0, 1, 5, TODAY), TODAY), 0)
+    expect(swapped.map((d) => d.planDay)).toEqual([0, 5, 2, 3, 4, 1, 6])
+  })
+
   it('composes multiple swaps in a week', () => {
     let active = build(planId, race)
     active = swapDays(active, 0, 0, 1, TODAY)

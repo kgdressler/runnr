@@ -88,6 +88,14 @@ export default function Week() {
             onToggle={() =>
               dispatch({ type: 'toggleComplete', date: day.date, done: day.status !== 'done' })
             }
+            onSubstitute={() =>
+              dispatch({
+                type: 'substitute',
+                planWeek,
+                planDay: day.planDay,
+                value: !day.substituted,
+              })
+            }
           />
         ))}
       </ul>
@@ -128,6 +136,7 @@ function DayRow({
   dimmed,
   onTap,
   onToggle,
+  onSubstitute,
 }: {
   day: ResolvedDay
   unit: 'mi' | 'km'
@@ -136,12 +145,15 @@ function DayRow({
   dimmed: boolean
   onTap: () => void
   onToggle: () => void
+  onSubstitute: () => void
 }) {
   const isRest = day.workout.kind === 'rest'
+  // Tune-up races can be run instead of raced; the goal race cannot.
+  const isTuneUp = !day.isGoalRace && (day.workout.kind === 'race' || day.substituted)
 
   return (
     <li
-      className={`flex items-center gap-3 rounded-xl border p-3 transition ${
+      className={`flex flex-wrap items-center gap-3 rounded-xl border p-3 transition ${
         selected ? 'border-indigo-500 ring-2 ring-indigo-500/40' : STATUS_STYLES[day.status]
       } ${dimmed ? 'opacity-40' : ''}`}
     >
@@ -186,6 +198,16 @@ function DayRow({
           }`}
         >
           ✓
+        </button>
+      )}
+
+      {isTuneUp && (
+        <button
+          type="button"
+          onClick={onSubstitute}
+          className="w-full rounded-lg border border-neutral-200 p-2 text-xs dark:border-neutral-800"
+        >
+          {day.substituted ? 'Switch back to racing it' : 'Not racing? Run the distance instead'}
         </button>
       )}
     </li>

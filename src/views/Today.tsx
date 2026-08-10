@@ -118,15 +118,10 @@ function TodayCard({
 }
 
 function Substitution({ day }: { day: ResolvedDay }) {
-  const { dispatch, active } = useAppState()
-  if (!active) return null
+  const { dispatch } = useAppState()
 
   // Only tune-up races can be swapped for a run; the goal race is the point.
-  const isTuneUp = day.isGoalRace === false && (day.workout.kind === 'race' || day.substituted)
-  if (!isTuneUp) return null
-
-  // Recover which plan day this came from so the substitution keys correctly.
-  const planDay = (active.swaps[day.planWeek] ?? [0, 1, 2, 3, 4, 5, 6])[day.slot]
+  if (day.isGoalRace || (day.workout.kind !== 'race' && !day.substituted)) return null
 
   return (
     <button
@@ -135,7 +130,7 @@ function Substitution({ day }: { day: ResolvedDay }) {
         dispatch({
           type: 'substitute',
           planWeek: day.planWeek,
-          planDay,
+          planDay: day.planDay,
           value: !day.substituted,
         })
       }
@@ -143,7 +138,7 @@ function Substitution({ day }: { day: ResolvedDay }) {
     >
       {day.substituted
         ? 'Racing it after all? Switch back to the race'
-        : "Not racing? Run the distance instead"}
+        : 'Not racing? Run the distance instead'}
     </button>
   )
 }

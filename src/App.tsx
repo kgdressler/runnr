@@ -4,6 +4,7 @@ import Setup from './views/Setup'
 import Today from './views/Today'
 import Week from './views/Week'
 import Season from './views/Season'
+import Plan from './views/Plan'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ function Shell() {
           <Route path="/" element={<Today />} />
           <Route path="/week" element={<Week />} />
           <Route path="/season" element={<Season />} />
+          <Route path="/plan" element={<Plan />} />
           <Route path="/setup" element={<Setup />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -46,7 +48,7 @@ const TABS = [
   { to: '/', label: 'Today' },
   { to: '/week', label: 'Week' },
   { to: '/season', label: 'Season' },
-  { to: '/setup', label: 'Plan' },
+  { to: '/plan', label: 'Plan' },
 ]
 
 function TabBar() {

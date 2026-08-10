@@ -46,6 +46,8 @@ export interface ResolvedDay {
   weekNumber: number
   /** Position 0..6 within the displayed week. */
   slot: number
+  /** Which of the plan's printed days this is, before any reordering. */
+  planDay: number
   workout: Workout
   /** True when this was a tune-up race the user chose to run instead. */
   substituted: boolean
@@ -203,6 +205,7 @@ export function resolveSchedule(active: ActivePlan, today: ISODate): ResolvedDay
         planWeek,
         weekNumber: planWeek + 1,
         slot,
+        planDay,
         workout,
         substituted,
         status,
