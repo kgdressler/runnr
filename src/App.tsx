@@ -1,39 +1,84 @@
-import { fitPlan, resolveSchedule, createActivePlan, planProgress } from './lib/schedule'
-import { todayLocal } from './lib/civil'
-import { PLANS } from './data/plans'
+import { HashRouter, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom'
+import { AppProvider, useAppState } from './state/useAppState'
+import Setup from './views/Setup'
+import Today from './views/Today'
 
-/**
- * Placeholder shell. Views land in steps 6-10; this exists so the deploy
- * pipeline is proven end to end before there is any UI to break.
- */
 export default function App() {
-  const today = todayLocal()
-  const demoRace = '2026-11-01'
-  const fit = fitPlan('half-novice-2', demoRace, today)
-  const active = fit.ok
-    ? createActivePlan({ id: 'demo', planId: 'half-novice-2', raceDate: demoRace, today })
-    : null
-  const progress = active ? planProgress(active, resolveSchedule(active, today), today) : null
+  return (
+    <AppProvider>
+      {/* Hash routing keeps deep links working on GitHub Pages, which serves
+          no fallback for unknown paths. */}
+      <HashRouter>
+        <Shell />
+      </HashRouter>
+    </AppProvider>
+  )
+}
+
+function Shell() {
+  const { active } = useAppState()
+  const location = useLocation()
+
+  // Without a plan there is nothing to show, so setup is the only destination.
+  if (!active && location.pathname !== '/setup') {
+    return <Navigate to="/setup" replace />
+  }
 
   return (
-    <main className="mx-auto max-w-md p-6 font-sans">
-      <h1 className="text-2xl font-bold">Runnr</h1>
-      <p className="mt-1 text-sm text-neutral-500">Training plan scaffolding — today is {today}.</p>
+    <div className="mx-auto min-h-dvh max-w-lg pb-24">
+      <main className="p-5">
+        <Routes>
+          <Route path="/" element={<Today />} />
+          <Route path="/week" element={<Placeholder name="This week" />} />
+          <Route path="/season" element={<Placeholder name="Season" />} />
+          <Route path="/history" element={<Placeholder name="History" />} />
+          <Route path="/setup" element={<Setup />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      {active && <TabBar />}
+    </div>
+  )
+}
 
-      <ul className="mt-6 space-y-1 text-sm">
-        {PLANS.map((plan) => (
-          <li key={plan.id}>
-            {plan.name} — {plan.weeks} weeks
+const TABS = [
+  { to: '/', label: 'Today' },
+  { to: '/week', label: 'Week' },
+  { to: '/season', label: 'Season' },
+  { to: '/setup', label: 'Plan' },
+]
+
+function TabBar() {
+  return (
+    <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-200 bg-white/90 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/90">
+      <ul className="mx-auto flex max-w-lg">
+        {TABS.map((tab) => (
+          <li key={tab.to} className="flex-1">
+            <NavLink
+              to={tab.to}
+              end={tab.to === '/'}
+              className={({ isActive }) =>
+                `block p-4 text-center text-sm font-medium transition ${
+                  isActive
+                    ? 'text-indigo-600 dark:text-indigo-400'
+                    : 'text-neutral-500 dark:text-neutral-400'
+                }`
+              }
+            >
+              {tab.label}
+            </NavLink>
           </li>
         ))}
       </ul>
+    </nav>
+  )
+}
 
-      {progress && (
-        <p className="mt-6 text-sm">
-          Demo: {progress.totalWorkouts} workouts, {progress.totalDistance} mi, race in{' '}
-          {progress.daysToRace} days.
-        </p>
-      )}
-    </main>
+function Placeholder({ name }: { name: string }) {
+  return (
+    <div className="py-12 text-center">
+      <p className="font-medium">{name}</p>
+      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Coming in the next step.</p>
+    </div>
   )
 }
