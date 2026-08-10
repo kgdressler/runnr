@@ -6,9 +6,10 @@ import { addDays } from '../lib/civil'
 import { fitPlan } from '../lib/schedule'
 import { formatLongDate, formatCountdown } from '../lib/format'
 import { useAppState } from '../state/useAppState'
+import History from '../components/History'
 
 export default function Setup() {
-  const { today, active, dispatch } = useAppState()
+  const { today, active, dispatch, data } = useAppState()
   const navigate = useNavigate()
 
   const [planId, setPlanId] = useState<PlanId>('half-novice-2')
@@ -128,6 +129,10 @@ export default function Setup() {
           Your current plan moves to history. Nothing is deleted.
         </p>
       )}
+
+      {/* With no active plan the tab bar is hidden and the Plan screen is
+          unreachable, so past races would otherwise have nowhere to live. */}
+      {!active && data.archived.length > 0 && <History archived={data.archived} today={today} />}
     </form>
   )
 }

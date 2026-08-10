@@ -328,6 +328,18 @@ describe('progress', () => {
     expect(progress.completedDistance).toBe(3)
   })
 
+  it('counts race distance toward the total', () => {
+    const active = build('half-novice-2', race)
+    const days = resolveSchedule(active, TODAY)
+    const totals = planProgress(active, days, TODAY)
+    // Runs and pace runs alone come to 192 mi; the 5-K, 10-K and the half
+    // marathon itself add the rest.
+    const runsOnly = days
+      .map((d) => (d.workout.kind === 'run' || d.workout.kind === 'pace' ? d.workout.mi : 0))
+      .reduce((s, n) => s + n, 0)
+    expect(totals.totalDistance).toBeCloseTo(runsOnly + 3.1 + 6.2 + 13.1, 1)
+  })
+
   it('reports distance in the chosen unit', () => {
     const active = { ...build('half-novice-2', race), unit: 'km' as const }
     const mi = planProgress(build('half-novice-2', race), resolveSchedule(active, TODAY), TODAY)

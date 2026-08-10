@@ -1,5 +1,5 @@
 import type { PlanId, Plan, Unit, Workout } from '../data/types'
-import { RACE_LENGTHS } from '../data/types'
+import { RACE_LENGTHS, workoutDistance } from '../data/types'
 import { getPlan } from '../data/plans'
 import { type ISODate, addDays, diffDays } from './civil'
 
@@ -322,8 +322,7 @@ export function planProgress(
   today: ISODate,
 ): PlanProgress {
   const unit = active.unit
-  const amount = (w: Workout) =>
-    w.kind === 'run' || w.kind === 'pace' ? (unit === 'mi' ? w.mi : w.km) : 0
+  const amount = (w: Workout) => workoutDistance(w, unit) ?? 0
 
   let totalWorkouts = 0
   let completedWorkouts = 0

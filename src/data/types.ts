@@ -40,3 +40,23 @@ export const RACE_LENGTHS: Record<RaceDistance, { mi: number; km: number; label:
   half: { mi: 13.1, km: 21.1, label: 'Half Marathon' },
   full: { mi: 26.2, km: 42.2, label: 'Marathon' },
 }
+
+/**
+ * Distance covered by a workout, for totals and progress.
+ *
+ * Races count: a week with a 5-K in it is not a lighter week than one without,
+ * and leaving them out made race weeks read as step-downs in the season totals.
+ * Returns null for workouts that cover no set distance.
+ */
+export function workoutDistance(workout: Workout, unit: Unit): number | null {
+  switch (workout.kind) {
+    case 'run':
+    case 'pace':
+      return unit === 'mi' ? workout.mi : workout.km
+    case 'race':
+      return RACE_LENGTHS[workout.race][unit]
+    case 'rest':
+    case 'cross':
+      return null
+  }
+}

@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../state/useAppState'
 import { weekDays, type ResolvedDay } from '../lib/schedule'
-import { shortWorkout, dayName, formatShortDate, distanceOf } from '../lib/format'
+import { shortWorkout, dayName, formatShortDate } from '../lib/format'
+import { workoutDistance } from '../data/types'
 
 export default function Season() {
   const { active, plan, days, today, unit, progress, dispatch } = useAppState()
@@ -35,22 +36,22 @@ export default function Season() {
 
       {/* Wide content scrolls in its own container so the page never does. */}
       <div className="-mx-5 overflow-x-auto px-5">
-        <table className="w-full min-w-[26rem] border-separate border-spacing-1 text-center text-xs">
+        <table className="w-full min-w-[20rem] border-separate border-spacing-0.5 text-center text-[11px]">
           <thead>
             <tr>
-              <th className="w-8 font-medium text-neutral-500 dark:text-neutral-400">Wk</th>
+              <th className="w-6 font-medium text-neutral-500 dark:text-neutral-400">Wk</th>
               {headers.map((h, i) => (
                 <th key={i} className="font-medium text-neutral-500 dark:text-neutral-400">
                   {h}
                 </th>
               ))}
-              <th className="w-10 font-medium text-neutral-500 dark:text-neutral-400">Tot</th>
+              <th className="w-8 font-medium text-neutral-500 dark:text-neutral-400">Tot</th>
             </tr>
           </thead>
           <tbody>
             {weeks.map((planWeek) => {
               const week = weekDays(days, planWeek)
-              const total = week.reduce((sum, d) => sum + (distanceOf(d.workout, unit) ?? 0), 0)
+              const total = week.reduce((sum, d) => sum + (workoutDistance(d.workout, unit) ?? 0), 0)
               return (
                 <tr key={planWeek}>
                   <th
@@ -117,7 +118,7 @@ function Cell({
     <td
       onClick={onClick}
       title={`${formatShortDate(day.date)} — ${day.isGoalRace ? 'Race' : ''}`}
-      className={`cursor-pointer rounded py-1.5 tabular-nums ${base} ${
+      className={`cursor-pointer rounded px-0.5 py-1.5 tabular-nums ${base} ${
         isToday ? 'ring-2 ring-indigo-500' : ''
       } ${day.isGoalRace ? 'font-bold' : ''}`}
     >
