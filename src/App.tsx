@@ -2,6 +2,8 @@ import { HashRouter, Routes, Route, NavLink, Navigate, useLocation } from 'react
 import { AppProvider, useAppState } from './state/useAppState'
 import Setup from './views/Setup'
 import Today from './views/Today'
+import Week from './views/Week'
+import Season from './views/Season'
 
 export default function App() {
   return (
@@ -29,9 +31,8 @@ function Shell() {
       <main className="p-5">
         <Routes>
           <Route path="/" element={<Today />} />
-          <Route path="/week" element={<Placeholder name="This week" />} />
-          <Route path="/season" element={<Placeholder name="Season" />} />
-          <Route path="/history" element={<Placeholder name="History" />} />
+          <Route path="/week" element={<Week />} />
+          <Route path="/season" element={<Season />} />
           <Route path="/setup" element={<Setup />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -71,14 +72,5 @@ function TabBar() {
         ))}
       </ul>
     </nav>
-  )
-}
-
-function Placeholder({ name }: { name: string }) {
-  return (
-    <div className="py-12 text-center">
-      <p className="font-medium">{name}</p>
-      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Coming in the next step.</p>
-    </div>
   )
 }
