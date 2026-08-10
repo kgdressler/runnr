@@ -6,9 +6,14 @@ check off workouts as you go.
 
 Plans are Hal Higdon's, transcribed from his printable PDFs.
 
-## Status
+## Screens
 
-Core scheduling logic and plan data are in place. UI is in progress.
+- **Today** — the day's workout and a check-off, with a countdown and progress.
+- **Week** — the current week, with tap-to-swap reordering.
+- **Season** — the whole plan as a grid, with weekly totals and a unit toggle.
+- **Plan** — the current race, past races, and where new plans are set up.
+
+Data lives in `localStorage`, so it stays on the device it was entered on.
 
 ## How the schedule is built
 
@@ -23,6 +28,10 @@ as `Date` objects. Doing plan arithmetic with `Date` means a race entered as
 
 Reordering a week stores a permutation of `[0..6]` rather than editing workouts,
 so weekly mileage cannot change and the printed order is always recoverable.
+
+One consequence worth knowing: anchoring to a race that is not a Sunday rotates
+the whole plan. A Saturday race means Higdon's Tuesday run lands on your Monday.
+Spacing relative to race day is preserved exactly, but weekday habits shift.
 
 ## Commands
 
